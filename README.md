@@ -64,6 +64,7 @@ https://<your-project>.vercel.app/health
 - Body: `{ "tool_input": { "query": "<optional keyword>" } }`
 - Response: Server-Sent Events (single event) containing TweetSmash bookmark JSON.
 - The server always fetches up to **100** bookmarks, then filters them locally (case-insensitive match in tweet text or tags).
+  - You can append a 4-digit year (e.g. "defi 2024") to restrict results to that year.
 
 **GET /health**
 - Simple health-check JSON.

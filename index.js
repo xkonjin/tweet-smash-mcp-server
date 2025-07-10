@@ -45,12 +45,23 @@ app.post('/invoke', async (req, res) => {
     // If a query was provided, filter the bookmarks client-side (case-insensitive search)
     let finalData = tweetsmashData;
     if (query) {
-      const q = query.toLowerCase();
+      // Extract optional year filter from query (e.g., "defi 2024")
+      let searchText = query;
+      let yearFilter = null;
+      if (query) {
+        const m = query.match(/\b(20\d{2})\b/);
+        if (m) {
+          yearFilter = m[1];
+          searchText = query.replace(m[1], '').trim();
+        }
+      }
       const items = tweetsmashData.data || tweetsmashData; // defensive in case of different shapes
       const filtered = items.filter(item => {
         const text = item.tweet_details?.text?.toLowerCase() || "";
         const tagsStr = (item.tags || []).join(" ").toLowerCase();
-        return text.includes(q) || tagsStr.includes(q);
+        const matchesKeyword = searchText ? (text.includes(searchText.toLowerCase()) || tagsStr.includes(searchText.toLowerCase())) : true;
+        const matchesYear = yearFilter ? (item.tweet_details?.posted_at?.startsWith(yearFilter)) : true;
+        return matchesKeyword && matchesYear;
       });
       finalData = { ...tweetsmashData, data: filtered };
     }
