@@ -75,9 +75,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Start the server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`TweetSmash MCP Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  console.log(`Invoke endpoint: http://localhost:${PORT}/invoke`);
-});
+// Start the server (only in local/dev environments)
+if (!process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`TweetSmash MCP Server running on port ${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`Invoke endpoint: http://localhost:${PORT}/invoke`);
+  });
+}
+
+// Export the app for serverless environments (e.g., Vercel)
+module.exports = app;

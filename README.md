@@ -2,46 +2,67 @@
 
 A Node.js Express server that bridges ChatGPT Custom Connector with TweetSmash API using Server-Sent Events.
 
-## Setup Instructions
+## Requirements
 
-### 1. Add TweetSmash API Key
+- Node 18+ (uses the built-in global `fetch`)
 
-In Replit, go to the **Secrets** tab (lock icon in the sidebar) and add:
-- **Key**: `TWEETSMASH_API_KEY`
-- **Value**: Your TweetSmash API key
-
-### 2. Install Dependencies and Run
+## Local Development
 
 ```bash
-npm install && npm start
+# 1. Install dependencies
+npm install
+
+# 2. Create a .env file and set your TweetSmash API key
+#    (or export it in your shell)
+TWEETSMASH_API_KEY=xxxxxxxx npm start
 ```
 
-## Usage
+The server starts on `http://localhost:3000`. Endpoints:
+- `POST /invoke`
+- `GET  /health`
 
-### Public Endpoint
+## Deploying to Vercel
 
-Your server will be available at:
+1. Install the Vercel CLI (optional but handy):
+
+```bash
+npm i -g vercel
 ```
-https://<repl_username>.<repl_id>.repl.co/invoke
+
+2. Link your project and create a new Vercel deployment:
+
+```bash
+vercel # follow prompts
 ```
 
-### ChatGPT Custom Connector Configuration
+3. Add the required environment variable in the Vercel dashboard **or** via CLI:
 
-To connect this server to ChatGPT Custom Connector, use these settings:
+```bash
+vercel env add TWEETSMASH_API_KEY
+```
 
-1. **MCP Server URL**: `https://<repl_username>.<repl_id>.repl.co/invoke`
-2. **Authentication**: 
-   - Type: Bearer Token
-   - Token: `<your_tweetsmash_api_key>` (same key used in Replit Secrets)
+4. Redeploy (if you added the env var via the dashboard):
 
-### API Endpoint Details
+```bash
+vercel deploy --prod
+```
+
+After deployment your endpoints will be available at:
+```
+https://<your-project>.vercel.app/invoke
+https://<your-project>.vercel.app/health
+```
+
+## ChatGPT Custom Connector Configuration
+
+1. **MCP Server URL**: `https://<your-project>.vercel.app/invoke`
+2. **Authentication**: Bearer Token (value: **your same TweetSmash API key**)
+
+## API Details
 
 **POST /invoke**
-- Accepts JSON body with optional `tool_input.query` parameter
-- Fetches bookmarks from TweetSmash API (limit: 20)
-- Returns data as Server-Sent Events stream
-- Response format: `data: {"json": <tweetsmash_response>}\n\n`
+- Body: `{ "tool_input": { "query": "<optional>" } }`
+- Response: Server-Sent Events (single event) containing TweetSmash bookmark JSON.
 
 **GET /health**
-- Health check endpoint
-- Returns: `{"status": "OK", "timestamp": "<current_time>"}`
+- Simple health-check JSON.
