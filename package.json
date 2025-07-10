@@ -4,6 +4,7 @@
   "description": "A Node.js Express server that bridges ChatGPT Custom Connector with TweetSmash API using Server-Sent Events.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
