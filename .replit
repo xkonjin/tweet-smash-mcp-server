@@ -21,7 +21,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node index.js"
+args = "TWEETSMASH_API_KEY=xSMEtSdg8Zc58SSxX5wxHzf8 node index.js"
 waitForPort = 3000
 
 [[ports]]

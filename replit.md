@@ -51,7 +51,7 @@ The application follows a simple proxy server architecture:
 - **node-fetch**: HTTP client for making API calls to TweetSmash
 
 ### Environment Variables
-- `TWEETSMASH_API_KEY`: Required Bearer token for TweetSmash API authentication
+- `TWEETSMASH_API_KEY`: Required Bearer token for TweetSmash API authentication (currently configured)
 - `PORT`: Optional port number (defaults to 3000)
 
 ## Deployment Strategy
