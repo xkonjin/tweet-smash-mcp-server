@@ -23,8 +23,29 @@ app.post('/invoke', async (req, res) => {
     }
 
     const fetchLimit = 100;
+
+    // Extract optional year filter from query (e.g., "defi 2024")
+    let searchText = query;
+    let yearFilter = null;
+    if (query) {
+      const m = query.match(/\b(20\d{2})\b/);
+      if (m) {
+        yearFilter = m[1];
+        searchText = query.replace(m[1], '').trim();
+      }
+    }
+
+    // Build TweetSmash API query params to offload filtering server-side
+    const apiUrl = new URL('https://api.tweetsmash.com/v1/bookmarks');
+    apiUrl.searchParams.set('limit', fetchLimit);
+    if (searchText) apiUrl.searchParams.set('q', searchText);
+    if (yearFilter) {
+      apiUrl.searchParams.set('posted_from', `${yearFilter}-01-01T00:00:00Z`);
+      apiUrl.searchParams.set('posted_to', `${yearFilter}-12-31T23:59:59Z`);
+    }
+
     // Make authenticated request to TweetSmash API
-    const tweetsmashResponse = await fetch(`https://api.tweetsmash.com/v1/bookmarks?limit=${fetchLimit}`, {
+    const tweetsmashResponse = await fetch(apiUrl.toString(), {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -45,16 +66,6 @@ app.post('/invoke', async (req, res) => {
     // If a query was provided, filter the bookmarks client-side (case-insensitive search)
     let finalData = tweetsmashData;
     if (query) {
-      // Extract optional year filter from query (e.g., "defi 2024")
-      let searchText = query;
-      let yearFilter = null;
-      if (query) {
-        const m = query.match(/\b(20\d{2})\b/);
-        if (m) {
-          yearFilter = m[1];
-          searchText = query.replace(m[1], '').trim();
-        }
-      }
       const items = tweetsmashData.data || tweetsmashData; // defensive in case of different shapes
       const filtered = items.filter(item => {
         const text = item.tweet_details?.text?.toLowerCase() || "";
