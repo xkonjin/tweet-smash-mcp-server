@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "tweet-smash-mcp-server",
   "version": "1.0.0",
   "description": "A Node.js Express server that bridges ChatGPT Custom Connector with TweetSmash API using Server-Sent Events.",
   "main": "index.js",
@@ -11,7 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
-    "node-fetch": "^3.3.2"
+    "express": "^5.1.0"
   }
 }
