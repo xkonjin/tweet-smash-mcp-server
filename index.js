@@ -22,8 +22,9 @@ app.post('/invoke', async (req, res) => {
       return;
     }
 
+    const fetchLimit = 100;
     // Make authenticated request to TweetSmash API
-    const tweetsmashResponse = await fetch('https://api.tweetsmash.com/v1/bookmarks?limit=20', {
+    const tweetsmashResponse = await fetch(`https://api.tweetsmash.com/v1/bookmarks?limit=${fetchLimit}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -41,6 +42,19 @@ app.post('/invoke', async (req, res) => {
 
     const tweetsmashData = await tweetsmashResponse.json();
 
+    // If a query was provided, filter the bookmarks client-side (case-insensitive search)
+    let finalData = tweetsmashData;
+    if (query) {
+      const q = query.toLowerCase();
+      const items = tweetsmashData.data || tweetsmashData; // defensive in case of different shapes
+      const filtered = items.filter(item => {
+        const text = item.tweet_details?.text?.toLowerCase() || "";
+        const tagsStr = (item.tags || []).join(" ").toLowerCase();
+        return text.includes(q) || tagsStr.includes(q);
+      });
+      finalData = { ...tweetsmashData, data: filtered };
+    }
+
     // Set Server-Sent Event headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
@@ -49,7 +63,7 @@ app.post('/invoke', async (req, res) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     // Send the TweetSmash response wrapped in a Server-Sent Event
-    const eventData = JSON.stringify({ json: tweetsmashData });
+    const eventData = JSON.stringify({ json: finalData });
     res.write(`data: ${eventData}\n\n`);
     
     // End the stream

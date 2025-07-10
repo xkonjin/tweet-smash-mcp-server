@@ -61,8 +61,9 @@ https://<your-project>.vercel.app/health
 ## API Details
 
 **POST /invoke**
-- Body: `{ "tool_input": { "query": "<optional>" } }`
+- Body: `{ "tool_input": { "query": "<optional keyword>" } }`
 - Response: Server-Sent Events (single event) containing TweetSmash bookmark JSON.
+- The server always fetches up to **100** bookmarks, then filters them locally (case-insensitive match in tweet text or tags).
 
 **GET /health**
 - Simple health-check JSON.
