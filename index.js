@@ -13,8 +13,8 @@ app.post('/invoke', async (req, res) => {
     // Extract tool_input.query from request body (optional)
     const query = req.body?.tool_input?.query;
     
-    // Get TweetSmash API key from environment variables
-    const apiKey = process.env.TWEETSMASH_API_KEY;
+    // Get TweetSmash API key from env or Authorization header
+    const apiKey = req.headers['authorization']?.replace(/^Bearer\s+/i, '') || process.env.TWEETSMASH_API_KEY;
     
     if (!apiKey) {
       console.error('TWEETSMASH_API_KEY environment variable is not set');

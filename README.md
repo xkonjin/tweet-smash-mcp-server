@@ -56,7 +56,7 @@ https://<your-project>.vercel.app/health
 ## ChatGPT Custom Connector Configuration
 
 1. **MCP Server URL**: `https://<your-project>.vercel.app/invoke`
-2. **Authentication**: Bearer Token (value: **your same TweetSmash API key**)
+2. **Authentication**: Bearer Token (value: **your TweetSmash API key**, optional — if provided in the request it overrides the environment variable)
 
 ## API Details
 
